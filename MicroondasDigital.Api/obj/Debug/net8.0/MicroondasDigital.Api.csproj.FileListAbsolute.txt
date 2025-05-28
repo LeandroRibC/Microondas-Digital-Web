@@ -1,0 +1,7 @@
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.csproj.AssemblyReference.cache
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.AssemblyInfoInputs.cache
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.AssemblyInfo.cs
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.csproj.CoreCompileInputs.cache
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.MvcApplicationPartsAssemblyInfo.cs
+C:\Users\Leandro Ribeiro\source\repos\MicroondasDigitalBenner\MicroondasDigital.Api\obj\Debug\net8.0\MicroondasDigital.Api.MvcApplicationPartsAssemblyInfo.cache

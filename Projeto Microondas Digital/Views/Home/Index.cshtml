@@ -1,0 +1,657 @@
+﻿@using MicroondasDigital.Models
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model ProgramaAquecimento
+@using Newtonsoft.Json
+@using MicroondasDigital.Models
+@{
+    var programas = new List<ProgramaAquecimento>();
+    if (TempData["Programas"] != null)
+    {
+        programas = JsonConvert.DeserializeObject<List<ProgramaAquecimento>>(TempData["Programas"].ToString());
+        TempData.Keep("Programas");
+    }
+}
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #222;
+        font-family: 'Segoe UI', Arial, sans-serif;
+    }
+
+    body {
+        min-height: 100vh;
+        min-width: 100vw;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        min-height: 100vh;
+        padding: 20px;
+    }
+
+    .programas-lista {
+        background: #181818;
+        border-radius: 18px;
+        box-shadow: 0 0 24px #000a;
+        padding: 32px 24px 24px 24px;
+        width: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 20px;
+    }
+
+    .microondas-painel {
+        background: #181818;
+        border-radius: 18px;
+        box-shadow: 0 0 24px #000a;
+        padding: 32px 24px 24px 24px;
+        width: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin: 0 20px;
+    }
+
+    .programa-btn {
+        width: 100%;
+        margin-bottom: 6px;
+        padding: 10px 0;
+        border-radius: 8px;
+        border: 1px solid #00e0ff;
+        background: #001a2d;
+        color: #00e0ff;
+        font-size: 1.1em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .programa-btn.selected,
+    .programa-btn:active {
+        background: #00e0ff;
+        color: #001a2d;
+    }
+
+    .programa-btn.customizado {
+        font-style: italic;
+    }
+
+    .programa-info {
+        background: #222;
+        border-radius: 8px;
+        color: #fff;
+        padding: 10px;
+        margin-bottom: 14px;
+        font-size: 0.97em;
+        box-shadow: 0 0 8px #0005;
+        border: 1px solid #444;
+    }
+
+    .display-labels {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-end;
+        width: 100%;
+        margin-bottom: 2px;
+        gap: 16px;
+    }
+
+    .label-display,
+    .label-potencia {
+        color: #00e0ff;
+        font-size: 0.95em;
+        text-align: center;
+        letter-spacing: 1px;
+        width: 220px;
+        font-weight: 500;
+    }
+
+    .label-potencia {
+        width: 80px;
+        color: #fff;
+        text-align: center;
+        font-size: 0.95em;
+        font-weight: 500;
+    }
+
+    .display-area {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        align-items: flex-end;
+        width: 100%;
+        margin-bottom: 10px;
+        gap: 16px;
+    }
+
+    .display-digital-tempo {
+        background: #001a2d;
+        color: #00e0ff;
+        font-family: 'Share Tech Mono', 'Consolas', monospace;
+        font-size: 2.7em;
+        letter-spacing: 0.1em;
+        border-radius: 8px;
+        padding: 14px 0 10px 0;
+        width: 220px;
+        text-align: center;
+        box-shadow: 0 0 10px #008;
+        min-height: 1.3em;
+        user-select: none;
+    }
+
+    .potencia-box {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        background: #222;
+        border-radius: 8px;
+        padding: 8px 0 10px 0;
+        width: 80px;
+        box-shadow: 0 0 6px #111;
+        border: 1px solid #444;
+    }
+
+    .display-digital-potencia {
+        color: #fff;
+        font-family: 'Share Tech Mono', 'Consolas', monospace;
+        font-size: 1.5em;
+        border-radius: 6px;
+        padding: 6px 0 6px 0;
+        width: 60px;
+        text-align: center;
+        background: #181818;
+        margin-bottom: 8px;
+        letter-spacing: 2px;
+        user-select: none;
+        border: none;
+    }
+
+    .potencia-controls {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 8px;
+    }
+
+    .potencia-btn {
+        background: #333;
+        color: #00e0ff;
+        border: 1px solid #444;
+        border-radius: 4px;
+        width: 28px;
+        height: 28px;
+        font-size: 1.3em;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s;
+        text-align: center;
+        line-height: 1;
+        padding: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .potencia-btn:active {
+        background: #00e0ff;
+        color: #111;
+    }
+
+    .botoes-grade {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+        width: 100%;
+        margin-bottom: 0;
+    }
+
+    .botao-microondas {
+        background: #222;
+        color: #fff;
+        border: 1px solid #444;
+        border-radius: 8px;
+        padding: 14px 0;
+        font-size: 1.1em;
+        font-weight: 500;
+        transition: background 0.2s, color 0.2s;
+        cursor: pointer;
+        box-shadow: 0 2px 6px #0004;
+    }
+
+    .botao-microondas:active {
+        background: #00e0ff;
+        color: #111;
+    }
+
+    .botoes-finais {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        width: 100%;
+        margin-top: 10px;
+    }
+
+    .botao-inicio-rapido {
+        background: #00e0ff;
+        color: #181818;
+        border: 1px solid #00e0ff;
+        border-radius: 8px;
+        padding: 14px 0;
+        font-size: 1.15em;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 12px #00e0ff44;
+        grid-column: span 1;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .botao-inicio-rapido:active {
+        background: #181818;
+        color: #00e0ff;
+    }
+
+    .status-area {
+        width: 100%;
+        margin-top: 10px;
+        background: #222;
+        border-radius: 8px;
+        padding: 10px 8px;
+        color: #3ff6ff;
+        font-size: 1.05em;
+        text-align: left;
+        min-height: 60px;
+    }
+
+    .cadastro-form {
+        background: #181818;
+        border-radius: 18px;
+        box-shadow: 0 0 24px #000a;
+        padding: 32px 24px 24px 24px;
+        width: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        color: #fff;
+        margin: 0 20px;
+    }
+
+    .form-group {
+        width: 100%;
+        margin-bottom: 15px;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 8px;
+        border-radius: 8px;
+        border: 1px solid #444;
+        background: #222;
+        color: #fff;
+    }
+
+    .btn-primary {
+        background: #00e0ff;
+        color: #181818;
+        border: 1px solid #00e0ff;
+        border-radius: 8px;
+        padding: 14px 0;
+        font-size: 1.15em;
+        font-weight: bold;
+        cursor: pointer;
+        box-shadow: 0 2px 12px #00e0ff44;
+        width: 100%;
+        transition: background 0.2s, color 0.2s;
+    }
+
+    .btn-primary:hover {
+        background: #181818;
+        color: #00e0ff;
+    }
+
+    .text-danger {
+        color: #ff6666;
+    }
+</style>
+
+ <div class="programas-lista">
+        <div style="color:#00e0ff;font-weight:bold;margin-bottom:8px;text-align:center;">Programas Pré-definidos</div>
+        @if (programas != null)
+        {
+            foreach (var prog in programas)
+            {
+                <button type="button" class="programa-btn @(prog.Nome.StartsWith("Custom") ? "customizado" : "")"
+                        data-nome="@prog.Nome"
+                        data-tempo="@prog.TempoSegundos"
+                        data-potencia="@prog.Potencia"
+                        data-stringaquecimento="@prog.StringAquecimento"
+                        data-instrucoes="@prog.Instrucoes"
+                        data-alimento="@prog.Alimento">
+                    @prog.Nome - @prog.Alimento
+                </button>
+            }
+        }
+        else
+        {
+            <div style="color:red;">Nenhum programa encontrado!</div>
+        }
+    </div>
+
+    <div class="microondas-painel">
+        <div id="programaInfo" class="programa-info" style="display:none;"></div>
+
+        <div class="display-labels">
+            <div class="label-display">TEMPO</div>
+            <div class="label-potencia">POTÊNCIA</div>
+        </div>
+        <div class="display-area">
+            <div class="display-digital-tempo" id="displayTempo">00:00</div>
+            <div class="potencia-box">
+                <div class="display-digital-potencia" id="displayPotencia">10</div>
+                <div class="potencia-controls">
+                    <button type="button" class="potencia-btn" id="btnPotMenos">–</button>
+                    <button type="button" class="potencia-btn" id="btnPotMais">+</button>
+                </div>
+            </div>
+        </div>
+        <form id="aquecimentoForm" method="post" asp-controller="Microondas" asp-action="Aquecer">
+            <input type="hidden" name="tempo" id="tempo" min="1" max="120" required />
+            <input type="hidden" name="potencia" id="potencia" min="1" max="10" required />
+            <div class="botoes-grade">
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('1')">1</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('2')">2</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('3')">3</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('4')">4</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('5')">5</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('6')">6</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('7')">7</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('8')">8</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('9')">9</button>
+                <button type="button" class="botao-microondas" onclick="limparDisplay()">Limpar</button>
+                <button type="button" class="botao-microondas" onclick="adicionarNumero('0')">0</button>
+                <button type="button" class="botao-microondas" onclick="setPotenciaMax()">Pot. Máx</button>
+            </div>
+            <div class="botoes-finais">
+                <button type="button" class="botao-microondas" id="btnPausarCancelar">Pausar/Cancelar</button>
+                <button type="button" class="botao-inicio-rapido" id="btnInicioRapido">Início Rápido +30s</button>
+            </div>
+            <button type="submit" class="botao-microondas" id="btnIniciar" style="width:100%;margin-top:10px;">Iniciar</button>
+        </form>
+        <div class="status-area">
+            <span id="status"></span>
+            <br>
+            <span id="tempoRestante"></span>
+        </div>
+    </div>
+
+    <div class="cadastro-form">
+        <div style="color:#00e0ff;font-weight:bold;margin-bottom:8px;text-align:center;">Cadastrar Novo Programa</div>
+       <form method="post" asp-controller="Microondas" asp-action="SalvarPrograma">
+    <div class="form-group">
+        <label>Nome do Programa:</label>
+        <input type="text" class="form-control" asp-for="Nome" required />
+        <span asp-validation-for="Nome" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Alimento:</label>
+        <input type="text" class="form-control" asp-for="Alimento" required />
+        <span asp-validation-for="Alimento" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Potência:</label>
+        <input type="number" class="form-control" asp-for="Potencia" min="1" max="10" required />
+        <span asp-validation-for="Potencia" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Tempo (segundos):</label>
+        <input type="number" class="form-control" asp-for="TempoSegundos" min="1" required />
+        <span asp-validation-for="TempoSegundos" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Caractere de Aquecimento:</label>
+        <input type="text" class="form-control" asp-for="StringAquecimento" required />
+        <span asp-validation-for="StringAquecimento" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label>Instruções (opcional):</label>
+        <textarea class="form-control" asp-for="Instrucoes"></textarea>
+        <span asp-validation-for="Instrucoes" class="text-danger"></span>
+    </div>
+    <button type="submit" class="btn btn-primary">Salvar Programa</button>
+</form>
+    </div>
+</div>
+
+<script>
+    // Variáveis de controle
+    let aquecimentoIntervalId;
+    let tempoRestante = 0;
+    let emAquecimento = false;
+    let pausado = false;
+    let potencia = 10;
+    let tempoDigitado = "";
+    let progresso = "";
+
+    let programaSelecionado = null;
+    let stringAquecimentoAtual = ".";
+    let instrucoesPrograma = "";
+
+    function formatarTempo(segundos) {
+        let min = Math.floor(segundos / 60);
+        let seg = segundos % 60;
+        return (
+            (min < 10 ? "0" : "") + min +
+            ":" +
+            (seg < 10 ? "0" : "") + seg
+        );
+    }
+
+    function atualizarDisplay() {
+        let segundos = parseInt(tempoDigitado) || 0;
+        document.getElementById("displayTempo").textContent = formatarTempo(segundos);
+        document.getElementById("tempo").value = segundos;
+        document.getElementById("displayPotencia").textContent = potencia;
+        document.getElementById("potencia").value = potencia;
+    }
+
+    function adicionarNumero(num) {
+        if (emAquecimento || programaSelecionado) return;
+        if (tempoDigitado.length >= 3) return;
+        tempoDigitado += num;
+        if (parseInt(tempoDigitado) > 120) tempoDigitado = "120";
+        atualizarDisplay();
+    }
+
+    function limparDisplay() {
+        if (emAquecimento) return;
+        tempoDigitado = "";
+        atualizarDisplay();
+        if (programaSelecionado) {
+            programaSelecionado = null;
+            stringAquecimentoAtual = ".";
+            instrucoesPrograma = "";
+            document.getElementById('programaInfo').style.display = "none";
+            document.querySelectorAll('.programa-btn').forEach(b => b.classList.remove('selected'));
+            bloquearCampos(false);
+        }
+    }
+
+    function setPotenciaMax() {
+        if (emAquecimento || programaSelecionado) return;
+        potencia = 10;
+        atualizarDisplay();
+    }
+
+    document.getElementById("btnPotMais").onclick = function () {
+        if (emAquecimento || programaSelecionado) return;
+        if (potencia < 10) {
+            potencia++;
+            atualizarDisplay();
+        }
+    };
+    document.getElementById("btnPotMenos").onclick = function () {
+        if (emAquecimento || programaSelecionado) return;
+        if (potencia > 1) {
+            potencia--;
+            atualizarDisplay();
+        }
+    };
+
+    // Seleção de programa pré-definido
+    document.querySelectorAll('.programa-btn').forEach(btn => {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.programa-btn').forEach(b => b.classList.remove('selected'));
+            this.classList.add('selected');
+            programaSelecionado = {
+                nome: this.dataset.nome,
+                tempo: parseInt(this.dataset.tempo),
+                potencia: parseInt(this.dataset.potencia),
+                stringAquecimento: this.dataset.stringaquecimento,
+                instrucoes: this.dataset.instrucoes,
+                alimento: this.dataset.alimento
+            };
+            document.getElementById('programaInfo').style.display = "block";
+            document.getElementById('programaInfo').innerHTML =
+                `<b>Programa:</b> ${programaSelecionado.nome} <br>
+                 <b>Alimento:</b> ${programaSelecionado.alimento} <br>
+                 <b>Tempo:</b> ${formatarTempo(programaSelecionado.tempo)} <br>
+                 <b>Potência:</b> ${programaSelecionado.potencia} <br>
+                 <b>Instruções:</b> ${programaSelecionado.instrucoes}`;
+            tempoDigitado = programaSelecionado.tempo + "";
+            potencia = programaSelecionado.potencia;
+            stringAquecimentoAtual = programaSelecionado.stringAquecimento;
+            instrucoesPrograma = programaSelecionado.instrucoes;
+            atualizarDisplay();
+            bloquearCampos(true);
+        });
+    });
+
+    function bloquearCampos(bloquear) {
+        let botoesTeclado = document.querySelectorAll('.botoes-grade button');
+        let btnPotMais = document.getElementById("btnPotMais");
+        let btnPotMenos = document.getElementById("btnPotMenos");
+        let btnPotMax = document.querySelector('.botoes-grade button[onclick="setPotenciaMax()"]');
+        if (bloquear) {
+            botoesTeclado.forEach(b => b.disabled = true);
+            btnPotMais.disabled = true;
+            btnPotMenos.disabled = true;
+            btnPotMax.disabled = true;
+        } else {
+            botoesTeclado.forEach(b => b.disabled = false);
+            btnPotMais.disabled = false;
+            btnPotMenos.disabled = false;
+            btnPotMax.disabled = false;
+        }
+    }
+
+    document.getElementById("btnPausarCancelar").onclick = function(e) {
+        e.preventDefault();
+        if (emAquecimento && !pausado) {
+            pausado = true;
+            clearInterval(aquecimentoIntervalId);
+            document.getElementById('status').innerText = "Aquecimento pausado.";
+        } else if (emAquecimento && pausado) {
+            pausado = false;
+            emAquecimento = false;
+            tempoRestante = 0;
+            clearInterval(aquecimentoIntervalId);
+            document.getElementById('status').innerText = "Aquecimento cancelado.";
+            document.getElementById('tempoRestante').innerText = "";
+            document.getElementById('displayTempo').textContent = "00:00";
+            tempoDigitado = "";
+            atualizarDisplay();
+        } else if (!emAquecimento && !pausado) {
+            limparDisplay();
+        }
+    };
+
+
+    document.getElementById("btnInicioRapido").onclick = function() {
+        if (programaSelecionado) return; 
+        if (emAquecimento && !pausado) {
+            tempoRestante += 30;
+            document.getElementById('tempoRestante').innerText = `${tempoRestante} segundos restantes`;
+        } else if (emAquecimento && pausado) {
+            pausado = false;
+            iniciarAquecimento(tempoRestante, potencia);
+        } else {
+            iniciarAquecimento(30, 10, true);
+        }
+    };
+
+    document.getElementById('aquecimentoForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        if (emAquecimento && !pausado) {
+            if (!programaSelecionado) {
+                tempoRestante += 30;
+                document.getElementById('tempoRestante').innerText = `${tempoRestante} segundos restantes`;
+            }
+            return;
+        }
+        if (emAquecimento && pausado) {
+            pausado = false;
+            iniciarAquecimento(tempoRestante, potencia);
+            return;
+        }
+        
+        if (programaSelecionado) {
+            iniciarAquecimento(programaSelecionado.tempo, programaSelecionado.potencia, false, true);
+            return;
+        }
+        let segundos = parseInt(tempoDigitado) || 0;
+        if (segundos < 1 || segundos > 120 || potencia < 1 || potencia > 10) {
+            alert("Informe um tempo (1-120s) e uma potência (1-10) antes de iniciar!");
+            return;
+        }
+        iniciarAquecimento(segundos, potencia, false);
+    });
+
+    function iniciarAquecimento(tempo, pot, isRapido, isPrograma = false) {
+        tempoRestante = tempo;
+        emAquecimento = true;
+        pausado = false;
+        progresso = "";
+        document.getElementById('status').innerText = "";
+        document.getElementById('tempoRestante').innerText = `${tempoRestante} segundos restantes`;
+        let display = document.getElementById('displayTempo');
+        let statusLabel = document.getElementById('status');
+        let stringAquecimento = isPrograma && programaSelecionado ? programaSelecionado.stringAquecimento : ".".repeat(pot);
+
+        clearInterval(aquecimentoIntervalId);
+
+        aquecimentoIntervalId = setInterval(function() {
+            if (tempoRestante <= 0 || pausado) {
+                clearInterval(aquecimentoIntervalId);
+                if (!pausado) {
+                    emAquecimento = false;
+                    statusLabel.innerText = progresso + " Aquecimento concluído.";
+                    document.getElementById('tempoRestante').innerText = "0 segundos restantes";
+                    display.textContent = "00:00";
+                    tempoDigitado = "";
+                    atualizarDisplay();
+                }
+            } else {
+                progresso += stringAquecimento + " ";
+                statusLabel.innerText = progresso;
+                document.getElementById('tempoRestante').innerText = `${tempoRestante} segundos restantes`;
+                display.textContent = formatarTempo(tempoRestante);
+                tempoRestante--;
+            }
+        }, 1000);
+
+        if (isRapido) {
+            potencia = 10;
+            atualizarDisplay();
+        }
+        }
+
+</script>

@@ -1,0 +1,10 @@
+[
+  {
+    "Nome": "Custom Pipoca",
+    "Alimento": "Pipoca",
+    "TempoSegundos": 45,
+    "Potencia": 8,
+    "StringAquecimento": "!",
+    "Instrucoes": "teste"
+  }
+]
